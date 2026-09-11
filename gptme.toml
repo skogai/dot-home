@@ -1,0 +1,46 @@
+[agent]
+name = "dot"
+
+[prompt]
+files = [
+  "README.md",
+  "ARCHITECTURE.md",
+  "ABOUT.md",
+  "SOUL.md",
+  "TASKS.md",
+  "TOOLS.md",
+  "lessons/README.md",
+  "projects/README.md",
+  # "WORKFLOW.md",  # rendered at run time by scripts/workflow-render.py — do not inject raw
+  "gptme.toml"
+]
+context_cmd = "scripts/context.sh"
+
+[lessons]
+# Layered lessons + skills:
+# - lessons/: agent-specific behavioral lessons (agent-specific first)
+# - skills/: agent-specific executable skills (SKILL.md format)
+# - gptme-contrib/lessons/: shared lessons as fallback
+# - gptme-contrib/skills/: shared skills (template-skill, code-review-helper, etc.)
+# External skills (Anthropic SKILL.md format) are crawled from all dirs.
+# First dir wins on filename collision, so agent-specific files take precedence.
+dirs = ["lessons", "skills", "gptme-contrib/lessons", "gptme-contrib/skills"]
+
+[plugins]
+# Plugin directories to search for custom plugins
+# paths = ["plugins"]
+# enabled = ["my_plugin"]
+
+[env]
+# Environment variables available to the agent
+# GPTME_TTS_VOICE = "am_adam"  # for Kokoro TTS
+# GPTME_LESSONS_TS_STATE = "state/lesson-thompson/bandit-state.json"
+
+# [mcp]
+# enabled = false
+# auto_start = false
+#
+# [[mcp.servers]]
+# name = "example-mcp-server"
+# command = "npx"
+# args = ["-y", "example-mcp-server"]

@@ -1,0 +1,108 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-symlinks
+      - id: destroyed-symlinks
+      - id: check-added-large-files
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        # Exclude gptme-contrib submodule (has its own checks) and dotfiles symlinks
+        exclude: ^gptme-contrib/|^dotfiles/
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.12.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-tabulate, types-docutils]
+        args: [--ignore-missing-imports, --check-untyped-defs]
+  - repo: local
+    hooks:
+      - id: check-root-structure
+        name: Check root directory structure
+        description: Ensures no new top-level files or directories are added without updating the allowlist.
+        entry: python3 ./gptme-contrib/scripts/precommit/check_root_structure.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        args:
+          # Files
+          - --allow=.gitattributes
+          - --allow=.github
+          - --allow=.gitignore
+          - --allow=.gitmodules
+          - --allow=.mailmap
+          - --allow=.pre-commit-config.yaml
+          - --allow=ABOUT.md
+          - --allow=AGENTS.md
+          - --allow=ARCHITECTURE.md
+          - --allow=CLAUDE.md
+          - --allow=Makefile
+          - --allow=README.md
+          - --allow=SOUL.md
+          - --allow=TASKS.md
+          - --allow=TOOLS.md
+          - --allow=WORKFLOW.md
+          # Directories
+          - --allow=bin
+          - --allow=dotfiles
+          - --allow=gptme-contrib
+          - --allow=gptme.toml
+          - --allow=journal
+          - --allow=knowledge
+          - --allow=lessons
+          - --allow=people
+          - --allow=projects
+          - --allow=scripts
+          - --allow=skills
+          - --allow=state
+          - --allow=tasks
+          - --allow=tests
+      - id: check-names
+        name: Check for agent-instance names
+        description: Verifies that we are not accidentally using names of agents in the template, or vice versa
+        entry: ./gptme-contrib/scripts/precommit/check-names.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: check-markdown-links
+        name: Check markdown links
+        description: Verifies all relative links in markdown files resolve correctly
+        entry: python3 ./gptme-contrib/scripts/precommit/check_markdown_links.py
+        language: system
+        types: [markdown]
+        pass_filenames: true
+        # Exclude example files which intentionally have broken links
+        exclude: ^projects/.*/examples/.*$
+      - id: validate-markdown-codeblock-syntax
+        name: Validate markdown codeblock syntax
+        description: Ensures markdown codeblocks have language tags to prevent parsing cut-offs
+        entry: python3 ./gptme-contrib/scripts/precommit/validators/validate_markdown_codeblock_syntax.py
+        language: system
+        types: [markdown]
+        pass_filenames: true
+        # Exclude lesson files - they need to show anti-patterns
+        exclude: ^lessons/.*$
+      - id: validate-task-frontmatter
+        name: Validate task frontmatter
+        description: Validates YAML frontmatter in task files
+        entry: ./gptme-contrib/scripts/precommit/validate_task_frontmatter.py
+        language: system
+        types: [markdown]
+        files: ^tasks/.*\.md$
+      - id: validate-task-metadata
+        name: Validate task metadata
+        entry: bash -c 'if command -v gptodo &> /dev/null; then gptodo check; else echo "gptodo not installed (optional) - skipping validation"; fi'
+        language: system
+        types: [markdown]
+        files: ^tasks/.*\.md$

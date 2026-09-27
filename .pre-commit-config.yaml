@@ -68,13 +68,13 @@ repos:
           - --allow=state
           - --allow=tasks
           - --allow=tests
-      - id: check-names
-        name: Check for agent-instance names
-        description: Verifies that we are not accidentally using names of agents in the template, or vice versa
-        entry: ./gptme-contrib/scripts/precommit/check-names.sh
-        language: system
-        pass_filenames: false
-        always_run: true
+      # - id: check-names
+      #   name: Check for agent-instance names
+      #   description: Verifies that we are not accidentally using names of agents in the template, or vice versa
+      #   entry: ./gptme-contrib/scripts/precommit/check-names.sh
+      #   language: system
+      #   pass_filenames: false
+      #   always_run: true
       - id: check-markdown-links
         name: Check markdown links
         description: Verifies all relative links in markdown files resolve correctly

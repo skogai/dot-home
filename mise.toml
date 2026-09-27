@@ -1,0 +1,5 @@
+[tools]
+pipx = "latest"
+prek = "latest"
+uv = "latest"
+worktrunk = "latest"
